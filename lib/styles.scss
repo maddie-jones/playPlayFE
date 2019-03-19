@@ -1,1 +1,22 @@
-
+body {
+  background-image: url("backgroundmike.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 300%;
+  color: white;
+}
+.container {
+ display: flex;
+ margin: 34px;
+ border: 5px solid #DBE8E1;
+ flex-direction: column;
+}
+.dropdowns {
+  display: flex;
+}
+.main {
+  display: flex;
+  flex-direction: row;
+}
+.artist-search {
+  text-align: center;
+}
