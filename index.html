@@ -14,28 +14,23 @@
       <button id="find-song-btn">Find Songs</button>
     </div>
   </header>
-  <section class="main">
+  <section id="main-section" class="main">
     <div class="container">
-      <div id="song">
-      
+      <div id="songs">
+
       </div>
     </div>
-    <div class="dropdowns">
+    <div id="dropdowns" class="dropdowns">
       <section class="favorites">
-        <div class="dropdown">
+        <div id="fav-dropdown-outer" class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="favorite-drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Favorites
           </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="item1" href="#">song1</a>
-            <button class="add-playlist">Add to playlist</button>
-            <a class="item2" href="#">song2</a>
-            <button class="add-playlist">Add to playlist</button>
-            <a class="item3" href="#">song3</a>
-            <button class="add-playlist">Add to playlist</button>
+          <div id="fav-dropdown-inner" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           </div>
         </div>
       </section>
+
       <section class="playlists">
         <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="playlist-drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -48,6 +43,8 @@
           </div>
         </div>
       </section>
+
+
     </div>
   </section>
   <script
