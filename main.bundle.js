@@ -48,7 +48,7 @@
 
 	__webpack_require__(1);
 
-	__webpack_require__(5).config();
+	__webpack_require__(6).config();
 	var mainSection = document.getElementById('main-section');
 	var dropDownsSection = document.getElementById('dropdowns');
 	var artistInput = document.getElementById("search-input");
@@ -58,8 +58,10 @@
 	var favDropDOuter = document.getElementById('fav-dropdown-outer');
 	var favDropDBtn = document.getElementById('favorite-drop');
 	var songsDiv = document.getElementById('songs');
+	var container = document.getElementById('container');
+	var playlistsDropD = document.getElementById('playlists-dropdown');
 	var apiKey = "869c7b19121345facdc061b2aa12dabf";
-	var $ = __webpack_require__(9);
+	var $ = __webpack_require__(10);
 
 	function showSongs() {
 	  var artist = artistInput.value;
@@ -79,6 +81,7 @@
 	      renderSongs(data);
 	    }
 	  });
+	  container.style.border = "5px solid #303437";
 	}
 
 	function cleanGenre(song) {
@@ -98,7 +101,7 @@
 	    veriGenre = cleanGenre(song);
 
 	    var songHTML = '\n       <p>Title: ' + song.track_name + '</p>\n       <p>Artist: ' + song.artist_name + '</p>\n       <p>Genre: ' + veriGenre + '</p>\n       <p>Rating: ' + song.track_rating + '</p>\n   ';
-	    var favHTML = '\n    <i class="far fa-star" id= "fav' + index + '"></i>';
+	    var favHTML = '\n    <i class="fas fa-star" id= "fav' + index + '"></i>';
 
 	    var songDiv = document.createElement('div');
 	    songDiv.setAttribute('class', 'song');
@@ -271,7 +274,7 @@
 	  favDiv.setAttribute('data-genre', '' + favData.genre);
 	  favDiv.setAttribute('data-rating', '' + favData.rating);
 
-	  var favHtml = '\n    <li class="fav-name">Name: ' + favData.name + '</li>\n    <li class="fav-artist_name">Artist Name: ' + favData.artist_name + '</li>\n    <li class="fav-genre">Genre: ' + favData.genre + '</li>\n    <li class="fav-rating">Rating: ' + favData.rating + '</li>\n    <button class="updateFav">Update</button>\n    <button class="removeFav">Remove</button>\n  ';
+	  var favHtml = '\n      <li class="fav-name">Name: ' + favData.name + '</li>\n      <li class="fav-artist_name">Artist Name: ' + favData.artist_name + '</li>\n      <li class="fav-genre">Genre: ' + favData.genre + '</li>\n      <li class="fav-rating">Rating: ' + favData.rating + '</li>\n      <button class="updateFav">Update</button>\n      <button class="removeFav">Remove</button>\n  ';
 
 	  favDiv.innerHTML = favHtml;
 	  favDropDInner.appendChild(favDiv);
@@ -284,8 +287,53 @@
 	  localStorage.setItem('favorites', favDropDInner.innerHTML);
 	}
 
+	function showPlaylistFavSection(playlistName) {
+	  var playlistFavSection = document.createElement('section');
+	  playlistFavSection.setAttribute('class', 'playlist-favorites');
+	  playlistFavSection.innerHTML = '\n    <div class="dropdown">\n    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n      Favorites for Playlists\n    </button>\n    <div id="playlist-favorites-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton"></div>';
+	  dropDownsSection.appendChild(playlistFavSection);
+	}
+
+	function showingFavoritesForPlaylist(id) {
+	  return document.getElementById('playlist-favorites-' + id);
+	}
+
+	function showFavoritesForPlaylist(targetedPlaylist) {
+	  var playlistFavorites = document.createElement('div');
+	  playlistFavorites.setAttribute('id', 'playlist-favorites-' + targetedPlaylist.id);
+
+	  var html = '<p>Favorites for ' + targetedPlaylist.innerText + '</p>';
+	  var favoriteIds = targetedPlaylist.dataset.favorites.split(",");
+	  favoriteIds.forEach(function (id) {
+	    var dataset = document.getElementById('favorite-' + id).dataset;
+	    html += '\n      <div class="playlist-favorite">\n        <li class="dropdown-item">Name: ' + dataset.name + '</li>\n        <li class="dropdown-item">Artist Name: ' + dataset.artist_name + '</li>\n        <li class="dropdown-item">Genre: ' + dataset.genre + '</li>\n        <li class="dropdown-item">Rating: ' + dataset.rating + '</li>\n      </div>\n    ';
+	  });
+	  playlistFavorites.innerHTML = html;
+	  document.getElementById('playlist-favorites-dropdown').appendChild(playlistFavorites);
+	}
+
+	function removeFavoritesForPlaylist(targetedPlaylist) {
+	  document.getElementById('playlist-favorites-dropdown').removeChild(document.getElementById('playlist-favorites-' + targetedPlaylist.id));
+	}
+
+	function showFavorites(e) {
+	  if (event.target.classList[0] === 'playlist-names') {
+	    if (!document.getElementsByClassName('playlist-favorites')[0]) {
+	      showPlaylistFavSection(event.target.innerText);
+	    }
+	    if (!showingFavoritesForPlaylist(event.target.id)) {
+	      showFavoritesForPlaylist(event.target);
+	      event.target.classList.add('showing-fav');
+	    } else {
+	      removeFavoritesForPlaylist(event.target);
+	      event.target.classList.remove('showing-fav');
+	    }
+	  }
+	}
+
 	function addListeners() {
 	  favDropDInner.addEventListener('click', changeFavorites);
+	  playlistsDropD.addEventListener('click', showFavorites);
 	}
 
 	function getFavorites() {
@@ -310,6 +358,8 @@
 	  var favGenre = childElements[5].textContent.slice(7, 50);
 	  var favRating = childElements[7].textContent.slice(7, 50);
 	  postFavorite(favName, favArtist, favGenre, favRating);
+	  var star = document.getElementById('fav' + index);
+	  star.style.color = "#FFFF00";
 	}
 
 	function postFavorite(title, artist, genre, rating) {
@@ -342,9 +392,36 @@
 
 	findSongsBtn.addEventListener('click', showSongs);
 
+	function makePlaylistHtml(playlists) {
+	  return playlists.reduce(function (html, playlist) {
+	    var favoriteIds = playlist.favorites.reduce(function (ids, favorite) {
+	      ids.push(favorite.id);
+	      return ids;
+	    }, []);
+	    html += '\n    <div class="playlist">\n      <p id="' + playlist.id + '" data-favorites="' + favoriteIds.join(",") + '" class="playlist-names">' + playlist.name + '</p>\n    </div>';
+	    return html;
+	  }, "");
+	}
+
+	function getPlaylists() {
+	  var playlists = localStorage.getItem('playlists');
+	  if (playlists) {
+	    playlistsDropD.innerHTML = playlists;
+	  } else {
+	    fetch('http://localhost:3000/api/v1/playlists').then(function (data) {
+	      return data.json();
+	    }).then(function (json) {
+	      var playlistHtml = makePlaylistHtml(json.playlists);
+	      localStorage.setItem('playlists', playlistHtml);
+	      playlistsDropD.innerHTML = playlistHtml;
+	    });
+	  }
+	}
+
 	window.addEventListener('load', function () {
 	  addListeners();
 	  getFavorites();
+	  getPlaylists();
 	});
 
 /***/ }),
@@ -357,7 +434,7 @@
 	var content = __webpack_require__(2);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(4)(content, {});
+	var update = __webpack_require__(5)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -382,7 +459,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-repeat: no-repeat;\n  background-size: 100% 300%;\n  color: white; }\n\n.container {\n  display: flex;\n  margin: 34px;\n  border: 5px solid #DBE8E1;\n  flex-direction: column; }\n\n.dropdowns {\n  display: flex; }\n\n.main {\n  display: flex;\n  flex-direction: row; }\n\n.artist-search {\n  text-align: center; }\n\ni.fas {\n  color: white; }\n\n.favorite {\n  background-color: Transparent;\n  background-repeat: no-repeat;\n  border: none;\n  cursor: pointer;\n  overflow: hidden;\n  outline: none; }\n", ""]);
+	exports.push([module.id, "body {\n  background-image: url(" + __webpack_require__(4) + ");\n  background-repeat: no-repeat;\n  background-size: cover;\n  color: white;\n  font-family: \"arial\", Verdana , sans-serif; }\n\n.title {\n  font-size: 50px;\n  padding: 35px;\n  color: #04D4F0;\n  text-shadow: 1.5px 1.5px #D9CED6; }\n\n.container {\n  display: flex;\n  margin: 34px;\n  flex-direction: column;\n  height: auto;\n  max-height: 600px;\n  overflow-x: hidden; }\n\n.dropdowns {\n  display: flex; }\n\n.main {\n  display: flex;\n  flex-direction: row; }\n\n.artist-search {\n  text-align: center; }\n\ni.fas {\n  color: white; }\n\n.scrollable-menu {\n  height: auto;\n  max-height: 400px;\n  overflow-x: hidden;\n  background-color: #D9CED6; }\n\n.favorite {\n  background-color: Transparent;\n  background-repeat: no-repeat;\n  border: none;\n  cursor: pointer;\n  overflow: hidden;\n  outline: none; }\n\n.btn-secondary {\n  margin: 15px; }\n\n.showing-fav {\n  color: #850050; }\n\n#search-input {\n  background-color: #D9CED6; }\n\n#find-song-btn {\n  background-color: #6e757c;\n  border-color: #6e757c;\n  color: white; }\n\n#fav-dropdown-inner {\n  padding: 30px; }\n", ""]);
 
 	// exports
 
@@ -445,6 +522,12 @@
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "06ba889745ef33006e1693f7b51a7463.jpg";
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/*
@@ -696,7 +779,7 @@
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/* @flow */
@@ -722,8 +805,8 @@
 
 	*/
 
-	const fs = __webpack_require__(7)
-	const path = __webpack_require__(8)
+	const fs = __webpack_require__(8)
+	const path = __webpack_require__(9)
 
 	function log (message /*: string */) {
 	  console.log(`[dotenv][DEBUG] ${message}`)
@@ -812,10 +895,10 @@
 	module.exports.config = config
 	module.exports.parse = parse
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 	// shim for using process in browser
@@ -1005,13 +1088,13 @@
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 	
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -1239,10 +1322,10 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
