@@ -1,14 +1,26 @@
+$primary-color: #D9CED6;
+
 body {
   background-image: url("backgroundmike.jpg");
   background-repeat: no-repeat;
-  background-size: 100% 300%;
+  background-size: cover;
   color: white;
+  font-family: "arial", Verdana , sans-serif;
+}
+.title {
+  font-size: 50px;
+  padding: 35px;
+  color: #04D4F0;
+  text-shadow: 1.5px 1.5px #D9CED6 ;
 }
 .container {
  display: flex;
  margin: 34px;
- border: 5px solid #DBE8E1;
+ border: 5px solid #303437;
  flex-direction: column;
+ height: auto;
+ max-height: 600px;
+ overflow-x: hidden;
 }
 .dropdowns {
   display: flex;
@@ -26,9 +38,10 @@ i.fas {
 }
 
 .scrollable-menu {
-    height: auto;
-    max-height: 400px;
-    overflow-x: hidden;
+  height: auto;
+  max-height: 400px;
+  overflow-x: hidden;
+  background-color: $primary-color;
 }
 
 .favorite {
@@ -38,4 +51,22 @@ i.fas {
   cursor: pointer;
   overflow: hidden;
   outline:none;
+}
+
+.btn-secondary {
+  margin: 15px;
+}
+
+#search-input {
+  background-color: $primary-color;
+}
+
+#find-song-btn {
+  background-color: #6e757c;
+  border-color:#6e757c;
+  color: white;
+}
+
+#fav-dropdown-inner {
+  padding: 30px;
 }
