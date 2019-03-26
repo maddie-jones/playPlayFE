@@ -48,7 +48,7 @@
 
 	__webpack_require__(1);
 
-	__webpack_require__(6).config();
+	__webpack_require__(5).config();
 	var mainSection = document.getElementById('main-section');
 	var dropDownsSection = document.getElementById('dropdowns');
 	var artistInput = document.getElementById("search-input");
@@ -59,7 +59,7 @@
 	var favDropDBtn = document.getElementById('favorite-drop');
 	var songsDiv = document.getElementById('songs');
 	var apiKey = "869c7b19121345facdc061b2aa12dabf";
-	var $ = __webpack_require__(10);
+	var $ = __webpack_require__(9);
 
 	function showSongs() {
 	  var artist = artistInput.value;
@@ -357,7 +357,7 @@
 	var content = __webpack_require__(2);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(5)(content, {});
+	var update = __webpack_require__(4)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -382,7 +382,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-image: url(" + __webpack_require__(4) + ");\n  background-repeat: no-repeat;\n  background-size: 100% 300%;\n  color: white; }\n\n.container {\n  display: flex;\n  margin: 34px;\n  border: 5px solid #DBE8E1;\n  flex-direction: column; }\n\n.dropdowns {\n  display: flex; }\n\n.main {\n  display: flex;\n  flex-direction: row; }\n\n.artist-search {\n  text-align: center; }\n\ni.fas {\n  color: white; }\n\n.favorite {\n  background-color: Transparent;\n  background-repeat: no-repeat;\n  border: none;\n  cursor: pointer;\n  overflow: hidden;\n  outline: none; }\n", ""]);
+	exports.push([module.id, "body {\n  background-repeat: no-repeat;\n  background-size: 100% 300%;\n  color: white; }\n\n.container {\n  display: flex;\n  margin: 34px;\n  border: 5px solid #DBE8E1;\n  flex-direction: column; }\n\n.dropdowns {\n  display: flex; }\n\n.main {\n  display: flex;\n  flex-direction: row; }\n\n.artist-search {\n  text-align: center; }\n\ni.fas {\n  color: white; }\n\n.favorite {\n  background-color: Transparent;\n  background-repeat: no-repeat;\n  border: none;\n  cursor: pointer;\n  overflow: hidden;\n  outline: none; }\n", ""]);
 
 	// exports
 
@@ -445,12 +445,6 @@
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "06ba889745ef33006e1693f7b51a7463.jpg";
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/*
@@ -702,7 +696,7 @@
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/* @flow */
@@ -728,8 +722,8 @@
 
 	*/
 
-	const fs = __webpack_require__(8)
-	const path = __webpack_require__(9)
+	const fs = __webpack_require__(7)
+	const path = __webpack_require__(8)
 
 	function log (message /*: string */) {
 	  console.log(`[dotenv][DEBUG] ${message}`)
@@ -818,10 +812,10 @@
 	module.exports.config = config
 	module.exports.parse = parse
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 	// shim for using process in browser
@@ -1011,13 +1005,13 @@
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports) {
 
 	
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -1245,10 +1239,10 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
