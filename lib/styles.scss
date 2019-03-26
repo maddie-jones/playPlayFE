@@ -25,6 +25,12 @@ i.fas {
   color: white;
 }
 
+.scrollable-menu {
+    height: auto;
+    max-height: 400px;
+    overflow-x: hidden;
+}
+
 .favorite {
   background-color: Transparent;
   background-repeat:no-repeat;
