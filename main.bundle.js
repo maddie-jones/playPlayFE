@@ -222,7 +222,7 @@
 	}
 
 	function removeFavorite(favId) {
-	  fetch('http://localhost:3000/api/v1/favorites/' + favId, {
+	  fetch('https://evening-cliffs-86902.herokuapp.com/api/v1/favorites/' + favId, {
 	    method: 'DELETE'
 	  }).then(function () {
 	    favoritesBox.removeChild(document.getElementById('favorite-' + favId));
@@ -414,7 +414,7 @@
 	  if (playlists) {
 	    playlistsDropD.innerHTML = playlists;
 	  } else {
-	    fetch('http://localhost:3000/api/v1/playlists').then(function (data) {
+	    fetch('https://evening-cliffs-86902.herokuapp.com/api/v1/playlists').then(function (data) {
 	      return data.json();
 	    }).then(function (json) {
 	      var playlistHtml = makePlaylistHtml(json.playlists);
@@ -1097,7 +1097,7 @@
 /* 8 */
 /***/ (function(module, exports) {
 
-	
+
 
 /***/ }),
 /* 9 */
