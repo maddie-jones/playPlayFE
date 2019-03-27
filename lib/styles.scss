@@ -17,6 +17,7 @@ body {
  display: flex;
  margin: 34px;
  flex-direction: column;
+ width: 900px;
  height: auto;
  max-height: 600px;
  overflow-x: hidden;
@@ -30,6 +31,14 @@ body {
 }
 .artist-search {
   text-align: center;
+}
+
+.favData {
+  padding: 25px;
+}
+.song {
+  padding-top: 25px;
+  padding-left: 15px;
 }
 
 i.fas {
@@ -60,6 +69,10 @@ i.fas {
   color: #850050;
 }
 
+.not-visible {
+  visibility: hidden;
+}
+
 #search-input {
   background-color: $primary-color;
 }
@@ -70,6 +83,11 @@ i.fas {
   color: white;
 }
 
-#fav-dropdown-inner {
-  padding: 30px;
+#favorites-box {
+  border: 5px solid rgb(48, 52, 55);
+  height: auto;
+  max-height: 500px;
+  overflow-x: hidden;
+  margin-left: 35px;
+  margin-top: 50px;
 }
