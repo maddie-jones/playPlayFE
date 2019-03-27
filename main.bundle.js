@@ -53,10 +53,8 @@
 	var dropDownsSection = document.getElementById('dropdowns');
 	var artistInput = document.getElementById("search-input");
 	var findSongsBtn = document.getElementById("find-song-btn");
-	var favoriteBtn = document.getElementById("favorite-drop");
-	var favDropDInner = document.getElementById('fav-dropdown-inner');
-	var favDropDOuter = document.getElementById('fav-dropdown-outer');
-	var favDropDBtn = document.getElementById('favorite-drop');
+	var favoritesBox = document.getElementById('favorites-box');
+	var favoriteBtn = document.getElementById('favorite-btn');
 	var songsDiv = document.getElementById('songs');
 	var container = document.getElementById('container');
 	var playlistsDropD = document.getElementById('playlists-dropdown');
@@ -101,21 +99,21 @@
 	    veriGenre = cleanGenre(song);
 
 	    var songHTML = '\n       <p>Title: ' + song.track_name + '</p>\n       <p>Artist: ' + song.artist_name + '</p>\n       <p>Genre: ' + veriGenre + '</p>\n       <p>Rating: ' + song.track_rating + '</p>\n   ';
-	    var favHTML = '\n    <i class="fas fa-star" id= "fav' + index + '"></i>';
+	    var starHTML = '\n    <i class="fas fa-star" id= "fav' + index + '"></i>';
 
 	    var songDiv = document.createElement('div');
 	    songDiv.setAttribute('class', 'song');
 	    songDiv.setAttribute('id', 'song-' + index);
 	    songDiv.innerHTML = songHTML;
 	    songsDiv.appendChild(songDiv);
-	    var favBtn = document.createElement('button');
-	    favBtn.setAttribute('class', 'favorite');
-	    favBtn.setAttribute('id', 'fav-' + index);
-	    favBtn.innerHTML = favHTML;
-	    favBtn.addEventListener('click', function () {
+	    var starBtn = document.createElement('button');
+	    starBtn.setAttribute('class', 'favorite');
+	    starBtn.setAttribute('id', 'fav-' + index);
+	    starBtn.innerHTML = starHTML;
+	    starBtn.addEventListener('click', function () {
 	      addFavorite(index);
 	    });
-	    songDiv.appendChild(favBtn);
+	    songDiv.appendChild(starBtn);
 	  };
 
 	  for (var index in tracks) {
@@ -126,16 +124,18 @@
 	  localStorage.setItem('songsHTML', songsDiv.innerHTML);
 	}
 
-	function toggleFavDropD() {
-	  if (favDropDOuter.classList.contains('show')) {
-	    favDropDOuter.classList.remove('show');
-	    favDropDInner.classList.remove('show');
-	    favDropDBtn.attributes['aria-expanded'] = 'false';
-	  } else {
-	    favDropDOuter.classList.add('show');
-	    favDropDInner.classList.add('show');
-	    favDropDBtn.attributes['aria-expanded'] = 'true';
-	  }
+	function openFavDropD() {
+	  var playlistFavDropD = document.getElementById('playlist-favorites-dropdown');
+	  document.getElementById('playlist-fav-outer').classList.add('show');
+	  playlistFavDropD.classList.add('show');
+	  document.getElementById('dropdownMenuButton').attributes['aria-expanded'] = 'true';
+	}
+
+	function closeFavDropD() {
+	  var playlistFavDropD = document.getElementById('playlist-favorites-dropdown');
+	  document.getElementById('playlist-fav-outer').classList.remove('show');
+	  playlistFavDropD.classList.remove('show');
+	  document.getElementById('dropdownMenuButton').attributes['aria-expanded'] = 'false';
 	}
 
 	var capitalizeFirst = function capitalizeFirst(string) {
@@ -215,8 +215,7 @@
 	      }
 	    }
 
-	    toggleFavDropD();
-	    localStorage.setItem('favorites', favDropDInner.innerHTML);
+	    localStorage.setItem('favorites', favoritesBox.innerHTML);
 	  }).catch(function (err) {
 	    return console.error(err);
 	  });
@@ -226,23 +225,20 @@
 	  fetch('http://localhost:3000/api/v1/favorites/' + favId, {
 	    method: 'DELETE'
 	  }).then(function () {
-	    favDropDInner.removeChild(document.getElementById('favorite-' + favId));
-	    localStorage.setItem('favorites', favDropDInner.innerHTML);
-	    setTimeout(function () {
-	      toggleFavDropD();
-	    }, 1000);
+	    favoritesBox.removeChild(document.getElementById('favorite-' + favId));
+	    localStorage.setItem('favorites', favoritesBox.innerHTML);
 	  });
 	}
 
-	function removeUpdateFavForm() {
-	  mainSection.removeChild(document.getElementById('updateFavForm'));
-	  setTimeout(function () {
-	    toggleFavDropD();
-	  }, 1000);
+	function toggleUpdateFavForm(favId, favValues) {
+	  if (document.getElementById('updateFavForm')) {
+	    mainSection.removeChild(document.getElementById('updateFavForm'));
+	  } else {
+	    showUpdateFavForm(favId, favValues);
+	  }
 	}
 
 	function showUpdateFavForm(favId, favValues) {
-	  console.dir(favValues);
 	  var formHTML = '\n    <label for="name">Name</label>\n    <input type="text" name="name" value="' + favValues.name + '" required>\n    <label for="artist">Artist</label>\n    <input type="text" name="artist_name" value="' + favValues.artist_name + '" required>\n    <label for="genre">Genre</label>\n    <input type="text" name="genre" value="' + favValues.genre + '" required>\n    <label for="rating">Rating</label>\n    <input type="text" name="rating" value="' + favValues.rating + '" required>\n\n    <button id="backUpdate" type="button">Back</button>\n    <button type="submit">Update</button>\n  ';
 	  var favForm = document.createElement('form');
 	  favForm.setAttribute('id', 'updateFavForm');
@@ -251,15 +247,22 @@
 
 	  mainSection.insertBefore(favForm, dropDownsSection);
 	  favForm.addEventListener('submit', updateFavorite);
-	  document.getElementById('backUpdate').addEventListener('click', removeUpdateFavForm);
+	  document.getElementById('backUpdate').addEventListener('click', toggleUpdateFavForm);
+	}
+
+	function toggleFavBox() {
+	  if (favoritesBox.classList.contains('not-visible')) {
+	    favoritesBox.classList.remove('not-visible');
+	  } else {
+	    favoritesBox.classList.add('not-visible');
+	  }
 	}
 
 	function changeFavorites(event) {
 	  var clickedClass = event.target.classList[0];
 	  var clickedFavoriteId = event.target.parentElement.id.split("-")[1];
-
 	  if (clickedClass === 'updateFav') {
-	    showUpdateFavForm(clickedFavoriteId, event.target.parentElement.dataset);
+	    toggleUpdateFavForm(clickedFavoriteId, event.target.parentElement.dataset);
 	  } else if (clickedClass === 'removeFav') {
 	    removeFavorite(clickedFavoriteId);
 	  }
@@ -274,23 +277,23 @@
 	  favDiv.setAttribute('data-genre', '' + favData.genre);
 	  favDiv.setAttribute('data-rating', '' + favData.rating);
 
-	  var favHtml = '\n      <li class="fav-name">Name: ' + favData.name + '</li>\n      <li class="fav-artist_name">Artist Name: ' + favData.artist_name + '</li>\n      <li class="fav-genre">Genre: ' + favData.genre + '</li>\n      <li class="fav-rating">Rating: ' + favData.rating + '</li>\n      <button class="updateFav">Update</button>\n      <button class="removeFav">Remove</button>\n  ';
+	  var favHtml = '\n      <p class="fav-name">Name: ' + favData.name + '</p>\n      <p class="fav-artist_name">Artist Name: ' + favData.artist_name + '</p>\n      <p class="fav-genre">Genre: ' + favData.genre + '</p>\n      <p class="fav-rating">Rating: ' + favData.rating + '</p>\n      <button class="updateFav">Update</button>\n      <button class="removeFav">Remove</button>\n      <button class="addToPlay">Add to playlist</button>\n  ';
 
 	  favDiv.innerHTML = favHtml;
-	  favDropDInner.appendChild(favDiv);
+	  favoritesBox.appendChild(favDiv);
 	}
 
 	function populateFavorites(favorites) {
 	  favorites.forEach(function (favorite) {
 	    makeAndAppendFavDiv(favorite);
 	  });
-	  localStorage.setItem('favorites', favDropDInner.innerHTML);
+	  localStorage.setItem('favorites', favoritesBox.innerHTML);
 	}
 
 	function showPlaylistFavSection(playlistName) {
 	  var playlistFavSection = document.createElement('section');
 	  playlistFavSection.setAttribute('class', 'playlist-favorites');
-	  playlistFavSection.innerHTML = '\n    <div class="dropdown">\n    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n      Favorites for Playlists\n    </button>\n    <div id="playlist-favorites-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton"></div>';
+	  playlistFavSection.innerHTML = '\n    <div id="playlist-fav-outer" class="dropdown">\n    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n      Favorites for Playlists\n    </button>\n    <div id="playlist-favorites-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton"></div>';
 	  dropDownsSection.appendChild(playlistFavSection);
 	}
 
@@ -323,23 +326,26 @@
 	    }
 	    if (!showingFavoritesForPlaylist(event.target.id)) {
 	      showFavoritesForPlaylist(event.target);
+	      openFavDropD();
 	      event.target.classList.add('showing-fav');
 	    } else {
 	      removeFavoritesForPlaylist(event.target);
+	      closeFavDropD();
 	      event.target.classList.remove('showing-fav');
 	    }
 	  }
 	}
 
 	function addListeners() {
-	  favDropDInner.addEventListener('click', changeFavorites);
+	  favoriteBtn.addEventListener('click', toggleFavBox);
+	  favoritesBox.addEventListener('click', changeFavorites);
 	  playlistsDropD.addEventListener('click', showFavorites);
 	}
 
 	function getFavorites() {
 	  var favorites = localStorage.getItem('fav');
 	  if (favorites) {
-	    favDropDInner.innerHTML = favorites;
+	    favoritesBox.innerHTML = favorites;
 	  } else {
 	    fetch('https://evening-cliffs-86902.herokuapp.com/api/v1/favorites').then(function (response) {
 	      return response.json();
@@ -385,8 +391,8 @@
 	      genre: madeFavorite.favorites.genre,
 	      rating: madeFavorite.favorites.rating
 	    });
-	    localStorage.setItem('favorites', favDropDInner.innerHTML);
-	    toggleFavDropD();
+	    localStorage.setItem('favorites', favoritesBox.innerHTML);
+	    favoritesBox.classList.remove('not-visible');
 	  });
 	}
 
@@ -459,7 +465,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-image: url(" + __webpack_require__(4) + ");\n  background-repeat: no-repeat;\n  background-size: cover;\n  color: white;\n  font-family: \"arial\", Verdana , sans-serif; }\n\n.title {\n  font-size: 50px;\n  padding: 35px;\n  color: #04D4F0;\n  text-shadow: 1.5px 1.5px #D9CED6; }\n\n.container {\n  display: flex;\n  margin: 34px;\n  flex-direction: column;\n  height: auto;\n  max-height: 600px;\n  overflow-x: hidden; }\n\n.dropdowns {\n  display: flex; }\n\n.main {\n  display: flex;\n  flex-direction: row; }\n\n.artist-search {\n  text-align: center; }\n\ni.fas {\n  color: white; }\n\n.scrollable-menu {\n  height: auto;\n  max-height: 400px;\n  overflow-x: hidden;\n  background-color: #D9CED6; }\n\n.favorite {\n  background-color: Transparent;\n  background-repeat: no-repeat;\n  border: none;\n  cursor: pointer;\n  overflow: hidden;\n  outline: none; }\n\n.btn-secondary {\n  margin: 15px; }\n\n.showing-fav {\n  color: #850050; }\n\n#search-input {\n  background-color: #D9CED6; }\n\n#find-song-btn {\n  background-color: #6e757c;\n  border-color: #6e757c;\n  color: white; }\n\n#fav-dropdown-inner {\n  padding: 30px; }\n", ""]);
+	exports.push([module.id, "body {\n  background-image: url(" + __webpack_require__(4) + ");\n  background-repeat: no-repeat;\n  background-size: cover;\n  color: white;\n  font-family: \"arial\", Verdana , sans-serif; }\n\n.title {\n  font-size: 50px;\n  padding: 35px;\n  color: #04D4F0;\n  text-shadow: 1.5px 1.5px #D9CED6; }\n\n.container {\n  display: flex;\n  margin: 34px;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  max-height: 600px;\n  overflow-x: hidden; }\n\n.dropdowns {\n  display: flex; }\n\n.main {\n  display: flex;\n  flex-direction: row; }\n\n.artist-search {\n  text-align: center; }\n\n.favData {\n  padding: 25px; }\n\n.song {\n  padding-top: 25px;\n  padding-left: 15px; }\n\ni.fas {\n  color: white; }\n\n.scrollable-menu {\n  height: auto;\n  max-height: 400px;\n  overflow-x: hidden;\n  background-color: #D9CED6; }\n\n.favorite {\n  background-color: Transparent;\n  background-repeat: no-repeat;\n  border: none;\n  cursor: pointer;\n  overflow: hidden;\n  outline: none; }\n\n.btn-secondary {\n  margin: 15px; }\n\n.showing-fav {\n  color: #850050; }\n\n.not-visible {\n  visibility: hidden; }\n\n#search-input {\n  background-color: #D9CED6; }\n\n#find-song-btn {\n  background-color: #6e757c;\n  border-color: #6e757c;\n  color: white; }\n\n#favorites-box {\n  border: 5px solid #303437;\n  height: auto;\n  max-height: 500px;\n  overflow-x: hidden;\n  margin-left: 35px;\n  margin-top: 50px; }\n", ""]);
 
 	// exports
 
