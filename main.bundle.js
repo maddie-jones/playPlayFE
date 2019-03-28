@@ -309,12 +309,28 @@
 	  var favoriteIds = targetedPlaylist.dataset.favorites.split(",");
 	  favoriteIds.forEach(function (id) {
 	    var dataset = document.getElementById('favorite-' + id).dataset;
-	    html += '\n      <div class="playlist-favorite">\n        <li class="dropdown-item">Name: ' + dataset.name + '</li>\n        <li class="dropdown-item">Artist Name: ' + dataset.artist_name + '</li>\n        <li class="dropdown-item">Genre: ' + dataset.genre + '</li>\n        <li class="dropdown-item">Rating: ' + dataset.rating + '</li>\n      </div>\n    ';
+	    var html = '\n      <div class="playlist-favorite">\n        <li class="dropdown-item">Name: ' + dataset.name + '</li>\n        <li class="dropdown-item">Artist Name: ' + dataset.artist_name + '</li>\n        <li class="dropdown-item">Genre: ' + dataset.genre + '</li>\n        <li class="dropdown-item">Rating: ' + dataset.rating + '</li>\n      </div>\n    ';
+	    var playFav = document.createElement('div');
+	    playFav.setAttribute('class', 'playlist-favorite');
+	    playFav.innerHTML = html;
+	    playlistFavorites.appendChild(playFav);
+	    var rmFav = document.createElement('button');
+	    rmFav.setAttribute('class', 'favorite');
+	    rmFav.setAttribute('id', 'rmFav-' + id);
+	    rmFav.innerHTML = "Remove";
+	    rmFav.addEventListener('click', function () {
+	      deleteFromPlay(id, targetedPlaylist.id);
+	    });
+	    playlistFavorites.appendChild(rmFav);
 	  });
-	  playlistFavorites.innerHTML = html;
 	  document.getElementById('playlist-favorites-dropdown').appendChild(playlistFavorites);
 	}
 
+	function deleteFromPlay(id, targetedPlaylist_id) {
+	  fetch('https://evening-cliffs-86902.herokuapp.com/api/v1/playlists/' + targetedPlaylist_id + '/favorites/' + id, {
+	    method: 'delete'
+	  });
+	}
 	function removeFavoritesForPlaylist(targetedPlaylist) {
 	  document.getElementById('playlist-favorites-dropdown').removeChild(document.getElementById('playlist-favorites-' + targetedPlaylist.id));
 	}
@@ -326,6 +342,8 @@
 	    }
 	    if (!showingFavoritesForPlaylist(event.target.id)) {
 	      showFavoritesForPlaylist(event.target);
+	    }
+	    if (!event.target.classList.contains('showing-fav')) {
 	      openFavDropD();
 	      event.target.classList.add('showing-fav');
 	    } else {
